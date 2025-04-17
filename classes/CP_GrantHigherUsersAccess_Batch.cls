@@ -43,7 +43,7 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
     }
 
     public void finish(Database.BatchableContext bc) {
-        //Database.executeBatch( new CP_RevokeHigherUsersAccess_Batch() );
+        Database.executeBatch( new CP_RevokeHigherUsersAccess_Batch() );
     }
     
     private Set<String> getExistingPortfoliosSet( Set<Id> userIds, Set<Id> contactIds ){

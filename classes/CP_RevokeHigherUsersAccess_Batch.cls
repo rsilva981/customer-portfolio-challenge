@@ -27,14 +27,13 @@ public class CP_RevokeHigherUsersAccess_Batch implements Database.Batchable<SObj
             Set<Id> highUsers = helper.getManagers( cp.User__c );
             if( !highUsers.isEmpty() ){ //This user is sub, so we need to check if the managers has access
                 for( Id highUserId : highUsers ){
-                    userIds.add( highUserId );
-                    contactIds.add( cp.Contact__c );
-                    
                     String key = helper.buildKey( highUserId, cp.Contact__c );
                     cpKeys.put( key, cp); 
+                    userIds.add( highUserId );
+                    contactIds.add( cp.Contact__c );
                 }
-            } else {
-                //What to do when a manager access is deleted?
+            } else { 
+                //This user is a manager, we need to check if the subs have access
             }
         }
         
@@ -52,10 +51,8 @@ public class CP_RevokeHigherUsersAccess_Batch implements Database.Batchable<SObj
     private Customer_Portfolio__c[] getPortfoliosToDelete( Map<String, Customer_Portfolio__c> cpKeys, Map<String, Customer_Portfolio__c> existingPortfoliosMap ){
         Customer_Portfolio__c[] portfoliosToDelete = new List<Customer_Portfolio__c>();
         for( String key : cpKeys.keySet() ){
-            System.debug(key);
             if( existingPortfoliosMap.containsKey(key) ){ //A manager user has access to this Customer Portfolio, so we need to delete
                 Customer_Portfolio__c portfolioToDelete = existingPortfoliosMap.get( key );
-                System.debug('Delete this: ' + portfolioToDelete);
                 portfoliosToDelete.add( portfolioToDelete );
             }
         }
