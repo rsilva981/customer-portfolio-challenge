@@ -16,7 +16,7 @@ public class CP_RevokeHigherUsersAccess_Batch implements Database.Batchable<SObj
         ]); 
     }
 
-    public void execute(Database.BatchableContext bc, List<Debug_Log__c> logs) {
+    public void execute(Database.BatchableContext bc, List<Debug_Log__c> logs) { //TODO Implement try catch system
         Customer_Portfolio__c[] customerPortfolios = getLogPortfolios( logs );
         
         Map<String, Customer_Portfolio__c> cpManKeys = new Map<String, Customer_Portfolio__c>(); //Manager access

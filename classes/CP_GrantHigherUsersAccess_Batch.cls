@@ -1,4 +1,4 @@
-public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObject>, Database.Stateful {
+public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObject> {
     
     //Batch job to grant Customer Portfolio access to users higher in the role hierarchy whenever lower-level users are granted access
     
@@ -16,7 +16,7 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
         ]);
     }
 
-    public void execute(Database.BatchableContext bc, List<Customer_Portfolio__c> scope) {
+    public void execute(Database.BatchableContext bc, List<Customer_Portfolio__c> scope) { //TODO Implement try catch system
 
         Map<String, Customer_Portfolio__c> cpKeys = new Map<String, Customer_Portfolio__c>();
         Set<Id> userIds = new Set<Id>();
@@ -66,7 +66,7 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
             Customer_Portfolio__c portfolioToUse = cpKeys.get( key );
             if( !existingPortfoliosSet.contains( key ) ){
                 Id highUserId = key.substringBefore('.');
-                Customer_Portfolio__c newPortfolio = builPortfolio( highUserId, portfolioToUse);
+                Customer_Portfolio__c newPortfolio = buildPortfolio( highUserId, portfolioToUse);
                	portfoliosToInsert.add( newPortfolio );
             }
         }
@@ -74,7 +74,7 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
         return portfoliosToInsert;
     }
     
-    private Customer_Portfolio__c builPortfolio( Id highUserId, Customer_Portfolio__c portfolioToUse){
+    private Customer_Portfolio__c buildPortfolio( Id highUserId, Customer_Portfolio__c portfolioToUse){
         return  new Customer_Portfolio__c(
             User__c = highUserId,
             Contact__c = portfolioToUse.Contact__c,
