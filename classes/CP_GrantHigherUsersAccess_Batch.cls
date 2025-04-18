@@ -23,7 +23,7 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
         Set<Id> contactIds= new Set<Id>(); 
         
         for( Customer_Portfolio__c cp : scope ){
-            Set<Id> highUsers = helper.getManagers( cp.User__c );
+            Set<Id> highUsers = helper.userToManagersMap.get(cp.User__c);
             if( !highUsers.isEmpty() ){
                 for( Id highUserId : highUsers ){
                     userIds.add( highUserId );
@@ -39,7 +39,7 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
         Customer_Portfolio__c[] portfolioToInsert = getPortfoliosToInsert( cpKeys, existingPortfoliosSet );
         
         Database.SaveResult[] sr = Database.insert( portfolioToInsert, false);
-        handleSaveResult( sr );
+        helper.handleSaveResult( sr );
     }
 
     public void finish(Database.BatchableContext bc) {
@@ -82,13 +82,5 @@ public class CP_GrantHigherUsersAccess_Batch implements Database.Batchable<SObje
             External_Id__c = helper.buildKey(highUserId, portfolioToUse.Contact__c),
             Favorite__c = portfolioToUse.Favorite__c
         );
-    }
-    
-    private void handleSaveResult( Database.SaveResult[] sr ){
-        for( Database.SaveResult result : sr ){
-            if( !result.isSuccess() ){
-                System.debug( 'Error: ' + result.getErrors() ); //TODO Create log
-            }
-        }
     }
 }
